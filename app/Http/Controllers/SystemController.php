@@ -79,6 +79,9 @@ class SystemController extends Controller
         return response()->json($logs, 200);
     }
 
+
+
+
     public function interfaces($uuid)
     {
         $device = Router::where('uuid', $uuid)->first();
@@ -88,6 +91,40 @@ class SystemController extends Controller
 
         return response()->json($interface, 200);
     }
+    public function remove_interface($uuid, $id)
+    {
+        $device = Router::where('uuid', $uuid)->first();
+        $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
+        $query = (new Query('/interface/remove'))
+            ->where('.id', $id);
+        $bridge = $client->query($query)->read();
+        return response()->json($bridge, 200);
+    }
+
+    public function change_disable_interface(Request $request, $uuid, $id)
+    {
+        $device = Router::where('uuid', $uuid)->first();
+        $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
+        $query = (new Query('/interface/set'))
+            ->where('.id', $id)
+            ->equal('disabled', $request->disabled);
+
+        $interface = $client->query($query)->read();
+        return response()->json($interface, 200);
+    }
+    public function change_running_interface(Request $request, $uuid, $id)
+    {
+        $device = Router::where('uuid', $uuid)->first();
+        $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
+        $query = (new Query('/interface/set'))
+            ->where('.id', $id)
+            ->equal('running', $request->running);
+
+        $interface = $client->query($query)->read();
+        return response()->json($interface, 200);
+    }
+
+
 
     public function bridges($uuid)
     {
@@ -106,7 +143,18 @@ class SystemController extends Controller
         $bridge = $client->query($query)->read();
         return response()->json($bridge, 200);
     }
-    
+    public function remove_bridge($uuid, $id)
+    {
+        $device = Router::where('uuid', $uuid)->first();
+        $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
+        $query = (new Query('/interface/bridge/remove'))
+            ->equal('.id', $id);
+        $bridge = $client->query($query)->read();
+        return response()->json($bridge, 200);
+    }
+
+
+
 
     public function ports($uuid)
     {
@@ -132,6 +180,7 @@ class SystemController extends Controller
         $port = $client->query($query)->read();
         return response()->json($port, 200);
     }
+
 
     public function vlans($uuid)
     {

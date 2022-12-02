@@ -28,15 +28,39 @@ class IPController extends Controller
 
         return response()->json($addresses, 200);
     }
+    public function add_address(Request $request, $uuid)
+    {
+        $device = Router::where('uuid', $uuid)->first();
+        $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
+        $query = (new Query('/ip/address/add'))
+            ->equal('address', $request->address)
+            ->equal('network', $request->network)
+            ->equal('interface', $request->interface);
+        $address = $client->query($query)->read();
+        return response()->json($address, 200);
+    }
+
+
     public function pool($uuid)
     {
         $device = Router::where('uuid', $uuid)->first();
         $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
         $query = new Query('/ip/pool/print');
         $pool = $client->query($query)->read();
-
         return response()->json($pool, 200);
     }
+    public function add_pool(Request $request, $uuid)
+    {
+        $device = Router::where('uuid', $uuid)->first();
+        $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
+        $query = (new Query('/ip/pool/add'))
+            ->equal('name', $request->name)
+            ->equal('ranges', $request->ranges);
+        $pool = $client->query($query)->read();
+        return response()->json($pool, 200);
+    }
+
+
     public function dns($uuid)
     {
         $device = Router::where('uuid', $uuid)->first();
