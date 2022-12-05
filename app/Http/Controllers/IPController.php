@@ -39,6 +39,15 @@ class IPController extends Controller
         $address = $client->query($query)->read();
         return response()->json($address, 200);
     }
+    public function remove_address($uuid, $id)
+    {
+        $device = Router::where('uuid', $uuid)->first();
+        $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
+        $query = (new Query('/ip/address/remove'))
+            ->equal('.id', $id);
+        $address = $client->query($query)->read();
+        return response()->json($address, 200);
+    }
 
 
     public function pool($uuid)
@@ -59,6 +68,16 @@ class IPController extends Controller
         $pool = $client->query($query)->read();
         return response()->json($pool, 200);
     }
+    public function remove_pool($uuid, $id)
+    {
+        $device = Router::where('uuid', $uuid)->first();
+        $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
+        $query = (new Query('/ip/pool/remove'))
+            ->equal('.id', $id);
+        $pool = $client->query($query)->read();
+        return response()->json($pool, 200);
+    }
+
 
 
     public function dns($uuid)
