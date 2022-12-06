@@ -34,8 +34,14 @@ Route::get('/system/{uuid}/traffic/{interface}', [SystemController::class, 'moni
 
 
 Route::get('/system/{uuid}/interfaces', [SystemController::class, 'interfaces']);
+
 Route::get('/system/{uuid}/hotspot', [HotspotController::class, 'hotspot']);
+Route::post('/system/{uuid}/hotspot', [HotspotController::class, 'add_hotspot']);
+Route::delete('/system/{uuid}/hotspot/{id}', [HotspotController::class, 'remove_hotspot']);
+
 Route::get('/system/{uuid}/hotspot/profiles', [HotspotController::class, 'profile']);
+Route::post('/system/{uuid}/hotspot/profiles', [HotspotController::class, 'add_profile']);
+Route::delete('/system/{uuid}/hotspot/profiles/{id}', [HotspotController::class, 'remove_profile']);
 
 
 Route::get('/system/{uuid}/ip/addresses', [IPController::class, 'address_list']);

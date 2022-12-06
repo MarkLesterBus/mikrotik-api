@@ -31,16 +31,54 @@ class HotspotController extends Controller
         return response()->json($profile, 200);
     }
 
-    public function add_address(Request $request, $uuid)
+    public function add_hotspot(Request $request, $uuid)
     {
         $device = Router::where('uuid', $uuid)->first();
         $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
-        $query = (new Query('/ip/address/add'))
-            ->equal('address', $request->address)
-            ->equal('network', $request->network)
-            ->equal('interface', $request->interface);
-        $address = $client->query($query)->read();
-        return response()->json($address, 200);
+        $query = (new Query('/ip/hotspot/add'))
+            ->equal('name', $request->name)
+            ->equal('interface', $request->_interface)
+            ->equal('address-pool', $request->_address_pool)
+            ->equal('profile', $request->profile)
+            ->equal('addresses-per-mac', (int) $request->addresses_per_mac);
+        $hotspot = $client->query($query)->read();
+        return response()->json($hotspot, 200);
+    }
+
+    public function add_profile(Request $request, $uuid)
+    {
+        $device = Router::where('uuid', $uuid)->first();
+        $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
+        $query = (new Query('/ip/hotspot/profile/add'))
+            ->equal('name', $request->name)
+            ->equal('hotspot-address', $request->hotspot_address)
+            ->equal('dns-name', $request->dns_name)
+            ->equal('html-directory', $request->html_directory)
+            ->equal('login-by', $request->login_by)
+            ->equal('http-cookie-lifetime', $request->http_cookie_lifetime);
+        $profile = $client->query($query)->read();
+        return response()->json($profile, 200);
+    }
+
+
+    public function remove_profile($uuid, $id)
+    {
+        $device = Router::where('uuid', $uuid)->first();
+        $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
+        $query = (new Query('/ip/hotspot/profile/remove'))
+            ->equal('.id', $id);
+        $profile = $client->query($query)->read();
+        return response()->json($profile, 200);
+    }
+
+    public function remove_hotspot($uuid, $id)
+    {
+        $device = Router::where('uuid', $uuid)->first();
+        $client = new Client(['host' => $device->host, 'user' => $device->user, 'pass' => $device->pass, 'port' => (int)$device->port]);
+        $query = (new Query('/ip/hotspot/remove'))
+            ->equal('.id', $id);
+        $hotspot = $client->query($query)->read();
+        return response()->json($hotspot, 200);
     }
 
     /**
